@@ -4,15 +4,15 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="pyHaveIBeenPwned",
-    version="0.1.15",
+    name="pyhaveibeenpwned",
+    version="0.2.0",
     author="Shane Scott",
-    author_email="gs@shanewilliamscott.com",
-    description="Library to query HaveIBeenPwned.com with handeling for CloudFlare anti-bot ",
+    author_email="shane@shanewilliamscott.com",
+    description="Library to query HaveIBeenPwned.com with handling for CloudFlare anti-bot",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/Hackman238/pyHaveIBeenPwned",
-    packages=['pyHaveIBeenPwned'],
+    packages=['pyhaveibeenpwned'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
