@@ -11,3 +11,5 @@
 - Last commit by sscottgvit: Update workflow
 ## v0.1.10 - 2024-05-01
 - Last commit by sscottgvit: Update workflow
+## v0.2.1 - 2025-11-26
+- Last commit by sscott-tantalumlabs: Bug fixes to search, Optimization, better PEP compliance, added smoke test, updated Git Action workflow, Readme
