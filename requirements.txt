@@ -1,3 +1,1 @@
-setuptools
-cfscrape
-pyflakes
+requests>=2.32.5

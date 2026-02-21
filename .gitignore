@@ -102,3 +102,14 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Editor / IDE
+*.code-workspace
+.vscode/
+.idea/
+
+# Additional Python tooling caches
+.ruff_cache/
+
+# Local-only helper scripts
+live_test_local.py
