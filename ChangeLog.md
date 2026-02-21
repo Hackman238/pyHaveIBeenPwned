@@ -1,6 +1,3 @@
-## Unreleased
-- No changes yet.
-
 ## v0.3.2 - 2026-02-21
 - Add provider-model architecture with a normalized multi-provider search flow (`BreachLookupClient`, `SearchRequest`, `ProviderResult`).
 - Add first-class providers for `haveibeenpwned` and `dehashed`, including provider-specific credentials and criteria handling.
@@ -23,6 +20,10 @@
 - Target HIBP v3 endpoints and add configurable request timeouts; all HTTP errors now raise `PyHaveIBeenPwnedError` with status and optional `Retry-After`.
 - Remove implicit live API call on module execution and harden JSON parsing/error wrapping.
 - Declare runtime dependencies (`cfscrape`, `requests`) in `install_requires` and refresh README with supported Python versions and API key requirements.
+
+## v0.2.1 - 2025-11-10
+- Last commit by sscott-tantalumlabs: Bug fixes to search, Optimization, better PEP compliance, added smoke test, updated Git Action workflow, Readme
+
 ## v0.2.0 - 2025-10-30
 - Adopt pep8-compliant snake_case public methods with deprecation shims for previous camelCase names.
 - Cache the CloudFlare scraper per instance, URL-encode parameters before dispatching, and raise `PyHaveIBeenPwnedError` when the API responds with an unexpected client error.
