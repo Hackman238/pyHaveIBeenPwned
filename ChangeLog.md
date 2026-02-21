@@ -37,3 +37,5 @@
 
 ## v0.1.9 - 2024-05-01
 - Last commit by sscottgvit: Update workflow
+## v0.3.3 - 2026-02-21
+- Last commit by sscott-tantalumlabs: Fix workflow issue
