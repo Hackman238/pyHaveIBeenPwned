@@ -10,18 +10,23 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     outputs:
-      new_version: ${{ steps.version.outputs.new_version }}
+      new_version: ${{ steps.increment_version.outputs.new_version }}
     
     steps:
-    - uses: actions/checkout@v2
-    
-    - name: Extract and increment version using sed and awk
+    - uses: actions/checkout@v4
+
+    - name: Extract and increment version from VERSION file
       id: increment_version
       run: |
-        version=$(sed -n "s/^ *version=['\"]\([^'\"]*\)['\"],/\1/p" setup.py)
-        new_version=$(echo $version | awk -F. -v OFS=. '{$NF += 1; print}')
-        sed -i "s;$version;$new_version;g" setup.py
-        echo "new_version=$new_version" >> $GITHUB_ENV
+        version=$(tr -d '[:space:]' < pyhaveibeenpwned/VERSION)
+        if [ -z "$version" ]; then
+          echo "Unable to read version from pyhaveibeenpwned/VERSION"
+          exit 1
+        fi
+        new_version=$(echo "$version" | awk -F. -v OFS=. '{$NF += 1; print}')
+        echo "$new_version" > pyhaveibeenpwned/VERSION
+        echo "new_version=$new_version" >> "$GITHUB_ENV"
+        echo "new_version=$new_version" >> "$GITHUB_OUTPUT"
 
     - name: Get last commit details
       id: last_commit
@@ -37,10 +42,11 @@ jobs:
         echo "- Last commit by ${{ env.commit_author }}: ${{ env.commit_message }}" >> ChangeLog.md
     
     - name: Commit and push changes
+      if: github.ref_type == 'branch'
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add setup.py ChangeLog.md
+        git add pyhaveibeenpwned/VERSION ChangeLog.md
         git commit -m "Bump version to ${{ env.new_version }} and update ChangeLog"
         git push
 
@@ -55,16 +61,16 @@ jobs:
         os: [ubuntu-latest]
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        python -m pip install flake8 semgrep setuptools wheel build twine
+        python -m pip install flake8 semgrep setuptools wheel build twine pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
     - name: Lint with flake8
@@ -72,22 +78,20 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=128 --statistics
 
-    - name: Run smoke tests
+    - name: Run tests
       run: |
-        python -m unittest tests.test_pyhaveibeenpwned
+        python -m pytest -q
 
     - name: Security scan with Semgrep
       run: |
         semgrep --config=p/r2c
 
-    - name: Patch version using sed and awk (not because we can't pull the commited update in prepare)
+    - name: Patch VERSION for build job
       run: |
-        version=$(sed -n "s/^ *version=['\"]\([^'\"]*\)['\"],/\1/p" setup.py)
-        new_version=$(echo $version | awk -F. -v OFS=. '{$NF += 1; print}')
-        sed -i "s;$version;$new_version;g" setup.py
+        echo "${{ needs.prepare.outputs.new_version }}" > pyhaveibeenpwned/VERSION
 
     - name: Build the package
-      run: python setup.py sdist bdist_wheel
+      run: python -m build --sdist --wheel
 
     - name: Build and publish
       if: success()
